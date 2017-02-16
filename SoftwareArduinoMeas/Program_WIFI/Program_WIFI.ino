@@ -1,26 +1,29 @@
 /*
-****************************
+********************************************************
 2017 Odisee elektromechanica
-****************************
+********************************************************
 */
-
-
+//Oproepen bibliotheken
 #include <WiFi.h>
 #include <Ethernet.h>
-// Wifi Connection
-char ssid[] = "DrayTek";      // your network SSID (name)
-char pass[] = "timver01";   // your network password
-int keyIndex = 0;                 // your network key Index number (needed only for WEP)
-int status = WL_IDLE_STATUS;
-//WiFiServer server(80);
-char server[] = "www.dweet.io";
-//char server[] = "www.google.com";
-// Initialize the Wifi server library
-WiFiClient client;
-//static WiFiClient client;
-int hp1 = 1;
-bool bBool;
 
+/*
+****************************
+Declareren van variabelen
+****************************
+*/
+// Wifi Connection
+char ssid[] = "**zelf in te vullen**";      // De naam van het wifi netwerk zoals deze op je PC staat
+char pass[] = "**zelf in te vullen**";      // Het paswoord van het wifi netwerk
+int keyIndex = 0;                           // Index nummer, enkel bij WEP 
+int status = WL_IDLE_STATUS;
+
+//WiFiServer server(80);
+char server[] = "www.dweet.io";             // Server waar de meetwaarden naartoe geschreven worden
+//Initialiseren van de wifi bibliotheek
+WiFiClient client;                          // client is de verwijzing die we gebruiken naar het wifi netwerk
+
+// 
 unsigned long lastConnectionTime = 0;             // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
 // the "L" is needed to use long type numbers
@@ -38,6 +41,9 @@ unsigned long sampletime_ms = 30000;
 unsigned long lowpulseoccupancy = 0;
 float ratio = 0;
 float concentration = 0;
+
+// Doorsturen gegevens
+bool bBool;
 
             /*
             ********************************************************
