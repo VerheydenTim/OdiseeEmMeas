@@ -6,7 +6,8 @@
 //Oproepen bibliotheken
 #include <WiFi.h>
 #include <Ethernet.h>
-
+#include <SPI.h>
+#include <SD.h>
 /*
 ****************************
 Declareren van variabelen
@@ -46,6 +47,8 @@ bool bBool;                       //Dit moet vervangen worden door een case stru
 //relatieve vochtigheid + temperatuur
 byte dataFrame [5]; // het in te lezen dataframe afkomstig van de sensor
 
+const int chipSelect = 4;
+
 void setup() {
   
      //Pin configuratie
@@ -73,7 +76,19 @@ void setup() {
       }
       // Gegevens van het netwerk printen      
       printWifiStatus();              
-}
+
+
+      //Initialiseer sd kaart
+       Serial.print("Initializing SD card...");
+      
+        // see if the card is present and can be initialized:
+        if (!SD.begin(chipSelect)) {
+          Serial.println("Card failed, or not present");
+          // don't do anything more:
+          return;
+        }
+        Serial.println("card initialized.");
+ }
 
 void loop() {
   start_test ();
@@ -129,9 +144,40 @@ Serial.println (millis());
     httpRequest(dataFrame [2],"POST /dweet/for/ArduinoTestTim?Temp=");
     bBool=true;
     }
-   }
-}
 
+
+     // make a string for assembling the data to log:
+  String dataString = "";
+
+  // read three sensors and append to the string:
+    dataString += "RV";
+    dataString += ",";
+    dataString += String(dataFrame [0]);
+    dataString += ",";
+    dataString += "Temp";
+    dataString += ",";
+    dataString += String(dataFrame [2]);
+    dataString += ",";
+
+  // open the file. note that only one file can be open at a time,
+  // so you have to close this one before opening another.
+  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+
+  // if the file is available, write to it:
+  if (dataFile) {
+    dataFile.println(dataString);
+    dataFile.close();
+    // print to the serial port too:
+    Serial.println(dataString);
+  }
+  // if the file isn't open, pop up an error:
+  else {
+    Serial.println("error opening datalog.txt");
+  }
+}
+   }
+
+  
 /*
 ********************************************************
 Relative vochtigheid en temperatuur sensor communicatie
